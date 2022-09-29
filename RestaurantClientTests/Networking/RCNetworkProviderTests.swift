@@ -19,7 +19,7 @@ final class RCNetworkProviderTests: XCTestCase {
         URLProtocolMock.requestHandler = nil
     }
     
-    private func getMockURLSession() -> URLSession {
+    func getMockURLSession() -> URLSession {
         let configuration = URLSessionConfiguration.default
         configuration.protocolClasses = [URLProtocolMock.self]
         let urlSession = URLSession(configuration: configuration)
@@ -183,39 +183,5 @@ fileprivate struct RCNetworkRouteMock: RCNetworkRouteProtocol {
         }
         
         fatalError("Not implemented")
-    }
-}
-
-fileprivate class URLProtocolMock: URLProtocol {
-    
-    static var requestHandler: ((URLRequest) throws -> (HTTPURLResponse, Data?))?
-    
-    override class func canInit(with request: URLRequest) -> Bool {
-        true
-    }
-    
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
-        request
-    }
-    
-    override func startLoading() {
-        guard let requestHandler = Self.requestHandler else {
-            fatalError("You must provide a implementation to mock")
-        }
-        
-        do {
-            let (response, data) = try requestHandler(request)
-            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-            if let data {
-                client?.urlProtocol(self, didLoad: data)
-            }
-            client?.urlProtocolDidFinishLoading(self)
-        } catch {
-            client?.urlProtocol(self, didFailWithError: error)
-        }
-    }
-    
-    override func stopLoading() {
-        
     }
 }
