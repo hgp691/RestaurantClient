@@ -12,6 +12,7 @@ final class RestaurantListDataManagerTest: XCTestCase {
     
     var dataManager: RestaurantListDataManager!
     var networProvider: RCNetworkProviderProtocol!
+    var restaurantStorage: RestaurantStorageMock!
     
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -19,13 +20,15 @@ final class RestaurantListDataManagerTest: XCTestCase {
         configuration.protocolClasses = [URLProtocolMock.self]
         let session = URLSession(configuration: configuration)
         networProvider = RCNetworkProvider(urlSession: session)
-        dataManager = RestaurantListDataManager(networkProvider: networProvider)
+        restaurantStorage = RestaurantStorageMock()
+        dataManager = RestaurantListDataManager(networkProvider: networProvider, restaurantStorage: restaurantStorage)
     }
     
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         dataManager = nil
         networProvider = nil
+        restaurantStorage = nil
         URLProtocolMock.requestHandler = nil
     }
     
@@ -43,6 +46,7 @@ final class RestaurantListDataManagerTest: XCTestCase {
             switch result {
                 case .success( _):
                     // Then
+                    XCTAssertTrue(self.restaurantStorage.restaurantCalled)
                     expectation.fulfill()
                 default:
                     break
@@ -72,3 +76,19 @@ final class RestaurantListDataManagerTest: XCTestCase {
     }
 }
 
+final class RestaurantStorageMock: RestaurantStorageProtocol {
+    
+    var restaurantCalled = false
+    
+    func saveRestaurant(restaurant: RestaurantClient.Restaurant) {
+        restaurantCalled = true
+    }
+    
+    func setRestaurantAsFavorite(restaurant: RestaurantClient.Restaurant) {
+        
+    }
+    
+    func isRestaurantFavorite(restaurant: RestaurantClient.Restaurant) -> Bool {
+        return false
+    }
+}

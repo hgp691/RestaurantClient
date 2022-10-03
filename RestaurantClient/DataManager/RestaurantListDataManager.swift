@@ -15,9 +15,12 @@ public protocol RestaurantListDataManagerProtocol {
 public struct RestaurantListDataManager: RestaurantListDataManagerProtocol {
     
     let networkProvider: RCNetworkProviderProtocol
+    let restaurantStorage: RestaurantStorageProtocol
     
-    init(networkProvider: RCNetworkProviderProtocol = RCNetworkProvider()) {
+    init(networkProvider: RCNetworkProviderProtocol = RCNetworkProvider(),
+         restaurantStorage: RestaurantStorageProtocol = RestaurantStorage()) {
         self.networkProvider = networkProvider
+        self.restaurantStorage = restaurantStorage
     }
     
     public func getRestaurantList(_ completion: @escaping (Result<[Restaurant], Error>) -> Void) {
@@ -25,10 +28,16 @@ public struct RestaurantListDataManager: RestaurantListDataManagerProtocol {
         networkProvider.requestGET(route) { (result: Result<RestaurantListHelper, Error>) in
             switch result {
                 case .success(let helper):
-                    completion(.success(helper.data))
+                    let restaurants = helper.data
+                    saveRestaurants(restaurants: restaurants)
+                    completion(.success(restaurants))
                 case .failure(let error):
                     completion(.failure(error))
             }
         }
+    }
+    
+    private func saveRestaurants(restaurants: [Restaurant]) {
+        restaurants.forEach { restaurantStorage.saveRestaurant(restaurant: $0) }
     }
 }
