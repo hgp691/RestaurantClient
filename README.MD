@@ -2,13 +2,15 @@
 
 ## Requirements
 **Xcode 14.0.1**\
-**iOS 12+**
+**iOS 12+**\
+I use **`SPM`** to manage a library that handles downloading images. I have done it by hand before but it took me longer to cache the images.
 
 ## Technical choices
 ### Network Layer
 I chose the native `URLSession` framework for networking. I did the testing of it and handle the errors of the application.
 ### Persistance Layer
-I chose the native `CoreData` Framework to solve the saving of favorites. I tested the functionality.
+I chose the native `CoreData` Framework to solve the saving of favorites. I tested the functionality.\
+In the implementation of the protocol I made a safe thread so that the data is read and written from the same thread.
 ### DataManager
 I made an intermediate layer between (Networking, CoreData) and the RestaurantList feature. I did the dependency injection in the initializer to be able to make mocks.
 ### Views
