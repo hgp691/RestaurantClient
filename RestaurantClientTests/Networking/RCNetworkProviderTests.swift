@@ -42,6 +42,8 @@ final class RCNetworkProviderTests: XCTestCase {
                 case .failure(let error as RCNetworkErrorMock):
                     XCTAssertEqual(error, expectedError)
                     expectation.fulfill()
+                case .failure( _):
+                    expectation.fulfill()
                 default:
                     return
             }
