@@ -24,3 +24,4 @@ I made a custom Cell that doesn't use Interface Builder and everything is done b
 - Missing ViewController and Cell tests.
 - The protocol for persistence (`RestaurantStorageProtocol`) can be divided into two that better comply with the Solid principle of interface segregation.
 - Missing error handling in the ViewController.
+- The way that the MainImage is obtained is wrong for two restaurants. This must be fixed.
